@@ -125,11 +125,11 @@ def parse_json(filepath):
         with open(filepath, 'r') as infile:
             jsonData = json.load(infile)
         if hasattr(jsonData, 'items'):
-            for k, v in jsonData.items():
+            for k, v in list(jsonData.items()):
                 try:
-                    if isinstance(k, unicode):
+                    if isinstance(k, str):
                         k = str(k)
-                    if isinstance(v, unicode):
+                    if isinstance(v, str):
                         v = str(v)
                 except NameError:
                     if isinstance(k, str):
@@ -141,7 +141,7 @@ def parse_json(filepath):
         else:
             for k, v in enumerate(jsonData):
                 try:
-                    if isinstance(v, unicode):
+                    if isinstance(v, str):
                         jsonData[k] = str(v)
                 except NameError:
                     if isinstance(v, str):
@@ -168,7 +168,7 @@ def dumps(obj, indent=1):
                 objStr += dumps(v, indent+1)
             else:
                 try:
-                    if isinstance(v, basestring):
+                    if isinstance(v, str):
                         objStr += '"' + _tmp + '"'
                     else:
                         objStr += _tmp
@@ -192,7 +192,7 @@ def dumps(obj, indent=1):
             objType = objType[1]
             objStr += objType + '", \n'
             copy = obj.__dict__.copy()
-        for k, v in copy.items():
+        for k, v in list(copy.items()):
             for _ in range(0, indent*4):
                 objStr += ' '
             objStr += '"' + str(k) + '": '
@@ -201,7 +201,7 @@ def dumps(obj, indent=1):
                 objStr += dumps(v, indent+1)
             else:
                 try:
-                    if isinstance(v, basestring):
+                    if isinstance(v, str):
                         objStr += '"' + _tmp + '"'
                     else:
                         objStr += _tmp
@@ -225,7 +225,7 @@ def dumps(obj, indent=1):
 def _reinstantiate(obj):
     if hasattr(obj, 'items'):
         obj_copy = obj.copy()
-        for k, v in obj_copy.items():
+        for k, v in list(obj_copy.items()):
             if issubclass(type(v), dict) or issubclass(type(v), list):
                 obj[k] = _reinstantiate(v)
             if k == "|JPYON|":
@@ -246,18 +246,18 @@ def _reinstantiate(obj):
 @atexit.register
 def safety_test():
     if len(_JPYONS_DATAS) >= 1:
-        print(15*"-")
+        print((15*"-"))
         print("")
         print("SAVE ERROR: ")
         print("    The following JPYON Object(s) did not get deconstructed and therefore did not get saved.")
         print("")
         print(">")
-        for k, v in _JPYONS_DATAS.items():
-            print("> {}".format(k))
+        for k, v in list(_JPYONS_DATAS.items()):
+            print(("> {}".format(k)))
         print(">")
         print("")
         print("*WARNING* Potential memory leak...")
         print(" - Are you storing the object(s) globally?")
         print(" - Is there circular referencing?")
         print("")
-        print(15*"-")
+        print((15*"-"))
